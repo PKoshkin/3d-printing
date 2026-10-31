@@ -7,7 +7,8 @@
 // threaded plastic stem. The stem pokes through the hole in the bottom of the canopy,
 // and the cord grip (a flanged nut) is screwed onto it from below, pressing the canopy
 // rim to the ceiling. So the canopy is centred on the hook and only has to cover the
-// hook, the bracket and the wire outlet, pass the nut's sleeve and seat its flange.
+// hook, the bracket and the wire outlet, and repeat the stock stepped hole the nut
+// fits: a through hole with a shallow recess around it on the outside.
 //
 // Modelled in print orientation: rim (ceiling side) on the bed, bottom face up. The
 // visible outer surface then faces up and prints clean; supports, if any, stay inside.
@@ -32,13 +33,15 @@ dome_fullness = 0.5; // [0.2:0.05:0.8]
 // Поддержки внутри при печати. Без них низ полости сужается (только для конуса)
 supports_inside = true;
 
-/* [Низ: фиксатор провода] */
-// Наружный диаметр втулки фиксатора, которая входит в отверстие, мм (ЗАМЕРИТЬ)
-sleeve_d = 13; // [6:0.1:25]
-// Диаметр фланца фиксатора, мм (ЗАМЕРИТЬ)
-flange_d = 28; // [12:0.5:45]
+/* [Низ: отверстие под фиксатор] */
+// Диаметр сквозного отверстия, мм (у родного 30,9)
+hole_d = 30.9; // [10:0.1:40]
+// Диаметр ступеньки снаружи, мм (у родного 35)
+recess_d = 35; // [10:0.1:45]
+// Глубина ступеньки, мм (у родного 0,8)
+recess_depth = 0.8; // [0:0.1:3]
 // Толщина дна у отверстия, мм
-bottom_t = 3; // [2:0.5:6]
+bottom_t = 2.4; // [1.2:0.2:6]
 
 /* [Просмотр] */
 // Разрез пополам (только для просмотра, перед экспортом выключить)
@@ -55,12 +58,15 @@ hook_len = 40;        // IKEA: the hook sticks out 20-40 mm
 // the cavity contains the stock canopy's; without them the cavity narrows towards the
 // hole (a dome's flat bottom would then fill up with solid material).
 max_overhang = supports_inside ? 89 : 60;
-hole_chamfer = 0.6;
 
 r_top = inner_r + wall;                  // outer radius at the ceiling
-r_seat = flange_d / 2 + 2;               // flat seat for the nut flange
-r_hole = (sleeve_d + 2 * CLEARANCE_SLIDE) / 2;
+// Stock hole sizes plus print compensation: printed holes come out a bit small.
+r_hole = hole_d / 2 + CLEARANCE_SNUG;
+r_recess = recess_d / 2 + CLEARANCE_SNUG;
+r_seat = r_recess + 1;                   // flat ring around the recess
 z_top = height - bottom_t;               // top of the inner cavity, at the hole
+
+assert(bottom_t >= recess_depth + 0.8, "the bottom under the recess would be too thin to print");
 
 function unit(v) = v / norm(v);
 function wrap(a) = a > 180 ? a - 360 : a <= -180 ? a + 360 : a;
@@ -121,7 +127,8 @@ outer_profile = concat([[0, 0]], side, [[0, height]]);
 cavity_profile = concat(
     [[0, -1], [cav[len(cav) - 1].x, -1]],
     [for (i = [len(cav) - 1 : -1 : 0]) cav[i]],
-    [[r_hole, height - hole_chamfer], [r_hole + hole_chamfer + 1, height + 1], [0, height + 1]]);
+    [[r_hole, height - recess_depth], [r_recess, height - recess_depth],
+     [r_recess, height + 1], [0, height + 1]]);
 
 module canopy() {
     rotate_extrude()
