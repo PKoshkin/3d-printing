@@ -74,19 +74,22 @@ def check_mesh(stl: Path, summary: Path) -> tuple[list[str], list[str]]:
     sx, sy, sz = mesh.extents
     bx, by, bz = bed_size()
     fits = sz <= bz and ((sx <= bx and sy <= by) or (sx <= by and sy <= bx))
-    manifold = json.loads(summary.read_text())["geometry"].get("simple", False)
+    # OpenSCAD only reports "simple" after a CSG operation; a bare extrusion has none.
+    simple = json.loads(summary.read_text())["geometry"].get("simple")
     report = [
         f"size:     {sx:.1f} × {sy:.1f} × {sz:.1f} mm "
         f"(bed {bx:g} × {by:g} × {bz:g}: {'fits' if fits else 'DOES NOT FIT'})",
         f"bodies:   {bodies}",
         f"volume:   {mesh.volume / 1000:.1f} cm³",
         f"mesh:     {'watertight' if mesh.is_watertight else 'NOT WATERTIGHT'}, "
-        f"{'manifold' if manifold else 'NOT MANIFOLD'}",
+        f"{'consistent winding' if mesh.is_winding_consistent else 'INCONSISTENT WINDING'}"
+        + ("" if simple is None else f", {'manifold' if simple else 'NOT MANIFOLD'}"),
     ]
     checks = {
         "does not fit the bed": fits,
         "mesh is not watertight": mesh.is_watertight,
-        "OpenSCAD reports non-manifold geometry": manifold,
+        "mesh has inconsistent face winding": mesh.is_winding_consistent,
+        "OpenSCAD reports non-manifold geometry": simple is not False,
     }
     return report, [msg for msg, ok in checks.items() if not ok]
 

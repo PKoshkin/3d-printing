@@ -4,7 +4,7 @@
 
 NOZZLE = 0.4;           // mm
 LAYER = 0.2;            // mm
-BED = [220, 220, 250];  // build volume X, Y, Z in mm; placeholder until we know the friend's printers
+BED = [256, 256, 256];  // build volume X, Y, Z in mm; assumed Bambu-class until we know the friend's printers
 
 // Per-side clearances in mm: hole = shaft + 2 * clearance.
 // Placeholders: replace with the results of parts/tolerance-test.
