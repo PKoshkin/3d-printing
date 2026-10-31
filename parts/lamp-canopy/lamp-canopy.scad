@@ -22,8 +22,8 @@ inner_r = 112; // [30:1:130]
 /* [Колпак] */
 // Форма
 style = "dome"; // [dome:Купол, cone:Конус]
-// Высота колпака, мм (как у родного, ЗАМЕРИТЬ)
-height = 60; // [30:1:100]
+// Высота колпака, мм (у родного 90)
+height = 90; // [40:1:120]
 // Толщина стенки, мм
 wall = 2.4; // [1.6:0.2:4]
 // Скругление нижней кромки конуса, мм
@@ -51,8 +51,8 @@ show_context = true;
 
 /* [Hidden] */
 installed = false;    // flip to the hanging position, for comparison renders only
-stock_d = 75;         // stock canopy, estimated from the IKEA measurement drawing
-stock_h = 60;
+stock_d = 130.7;      // stock canopy, measured (its wall is 1.4 mm)
+stock_h = 90;
 hook_len = 40;        // IKEA: the hook sticks out 20-40 mm
 // Hidden inner surface, degrees from vertical. With supports the wall stays uniform and
 // the cavity contains the stock canopy's; without them the cavity narrows towards the
