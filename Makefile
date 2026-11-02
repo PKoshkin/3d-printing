@@ -1,16 +1,18 @@
-# make build PART=<name>   export 3MF/STL, render previews, check the mesh
-# make all                 the same for every part
-# make open PART=<name>    open the part in the OpenSCAD window
+# make build PART=<name>              export 3MF/STL, render previews, check the mesh
+# make build PART=<name> TARGET=<id>  the same for another print target, into out/<id>/
+# make all                            the same for every part (TARGET= works here too)
+# make open PART=<name>               open the part in the OpenSCAD window
 PARTS := $(sort $(patsubst %/,%,$(dir $(wildcard parts/*/*.scad))))
+TARGET_ARG = $(if $(TARGET),--target $(TARGET))
 
 .PHONY: all build open clean
 
 all:
-	uv run tools/build.py $(PARTS)
+	uv run tools/build.py $(TARGET_ARG) $(PARTS)
 
 build:
-	@test -n "$(PART)" || { echo "usage: make build PART=<name>"; exit 2; }
-	uv run tools/build.py parts/$(PART)
+	@test -n "$(PART)" || { echo "usage: make build PART=<name> [TARGET=<id>]"; exit 2; }
+	uv run tools/build.py $(TARGET_ARG) parts/$(PART)
 
 # A cold-started OpenSCAD keeps the window of a file handed over by "open" hidden,
 # so the first launch gets the path as an argument; a running one ignores arguments.

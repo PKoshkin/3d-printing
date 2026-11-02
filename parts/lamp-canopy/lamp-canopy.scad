@@ -12,8 +12,14 @@
 //
 // Modelled in print orientation: rim (ceiling side) on the bed, bottom face up. The
 // visible outer surface then faces up and prints clean; supports, if any, stay inside.
+//
+// Ordered from a print service: at 229 mm it is too wide for the friend's 20 cm printer.
 
 include <../../lib/printer.scad>
+
+/* [Где печатать] */
+// От этого зависят зазоры посадок и проверка размера
+target = "craftcloud-fdm"; // [craftcloud-fdm:Craftcloud — FDM, craftcloud-mjf:Craftcloud — нейлон PA12 MJF/SLS]
 
 /* [Размер] */
 // Внутренний радиус у потолка: от точки крюка до внутренней стенки, мм
@@ -61,12 +67,13 @@ max_overhang = supports_inside ? 89 : 60;
 
 r_top = inner_r + wall;                  // outer radius at the ceiling
 // Stock hole sizes plus print compensation: printed holes come out a bit small.
-r_hole = hole_d / 2 + CLEARANCE_SNUG;
-r_recess = recess_d / 2 + CLEARANCE_SNUG;
+r_hole = hole_d / 2 + clearance_snug();
+r_recess = recess_d / 2 + clearance_snug();
 r_seat = r_recess + 1;                   // flat ring around the recess
 z_top = height - bottom_t;               // top of the inner cavity, at the hole
 
 assert(bottom_t >= recess_depth + 0.8, "the bottom under the recess would be too thin to print");
+assert(wall >= min_wall(), str("the wall is thinner than ", min_wall(), " mm, the minimum for ", target));
 
 function unit(v) = v / norm(v);
 function wrap(a) = a > 180 ? a - 360 : a <= -180 ? a + 360 : a;

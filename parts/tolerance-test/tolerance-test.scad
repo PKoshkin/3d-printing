@@ -1,6 +1,7 @@
 // Clearance test: a plate with holes sized peg + 2 * clearance, and a peg to try in each.
 // Modelled in print orientation: the plate lies flat, the peg stands on its flange.
-// Self-contained on purpose (only BOSL2), so the file can be shared as is.
+// Self-contained on purpose (only BOSL2), so the file can be shared as is. It calibrates
+// the friend's printer, the only target here whose clearances can be measured.
 
 include <BOSL2/std.scad>
 
@@ -13,6 +14,7 @@ clearances = [0.1, 0.15, 0.2, 0.25, 0.3, 0.4];
 plate_t = 5; // [3:0.5:10]
 
 /* [Hidden] */
+target = "friend";     // where it gets printed: tools/build.py checks the size against it
 $fa = 1;
 $fs = 0.25;
 
