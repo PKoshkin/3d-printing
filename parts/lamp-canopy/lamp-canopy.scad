@@ -18,7 +18,7 @@
 include <../../lib/printer.scad>
 
 /* [Где печатать] */
-// От этого зависят зазоры посадок и проверка размера
+// От этого зависят проверка размера и минимальная стенка
 target = "craftcloud-fdm"; // [craftcloud-fdm:Craftcloud — FDM, craftcloud-mjf:Craftcloud — нейлон PA12 MJF/SLS]
 
 /* [Размер] */
@@ -29,7 +29,7 @@ inner_r = 112; // [30:1:130]
 // Форма
 style = "dome"; // [dome:Купол, cone:Конус]
 // Высота колпака, мм (у родного 90)
-height = 90; // [40:1:120]
+height = 89; // [40:1:120]
 // Толщина стенки, мм
 wall = 2.4; // [1.6:0.2:4]
 // Скругление нижней кромки конуса, мм
@@ -66,9 +66,10 @@ hook_len = 40;        // IKEA: the hook sticks out 20-40 mm
 max_overhang = supports_inside ? 89 : 60;
 
 r_top = inner_r + wall;                  // outer radius at the ceiling
-// Stock hole sizes plus print compensation: printed holes come out a bit small.
-r_hole = hole_d / 2 + clearance_snug();
-r_recess = recess_d / 2 + clearance_snug();
+// The stock hole's sizes as they are, no clearance: Pavel's call, the stock part already
+// leaves the nut a small gap.
+r_hole = hole_d / 2;
+r_recess = recess_d / 2;
 r_seat = r_recess + 1;                   // flat ring around the recess
 z_top = height - bottom_t;               // top of the inner cavity, at the hole
 
